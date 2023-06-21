@@ -9,11 +9,18 @@ const App = () => {
   const fetchWeatherData = async () => {
     try {
       const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=4a1761b38f020e1d2f0132021b7a32d4`
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=4a1761b38f020e1d2f0132021b7a32d4&units=metric`
       );
       setWeatherData(response.data);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Prevent form submission if the input is within a form element
+      fetchWeatherData();
     }
   };
 
@@ -25,6 +32,7 @@ const App = () => {
           placeholder="Enter a city"
           value={city}
           onChange={(e) => setCity(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
         <button onClick={fetchWeatherData}>Get Weather</button>
       </div>
