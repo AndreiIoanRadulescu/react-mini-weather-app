@@ -27,6 +27,11 @@
   background-color: #4caf50;
   color: white;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.input-container button:hover {
+  background-color: #45a049;
 }
 
 .weather-info {
@@ -41,3 +46,4 @@
 .weather-info p {
   margin: 5px 0;
 }
+

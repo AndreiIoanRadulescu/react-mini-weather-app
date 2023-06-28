@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import './App.css';
 
 const App = () => {
@@ -8,11 +7,18 @@ const App = () => {
 
   const fetchWeatherData = async () => {
     try {
-      const response = await axios.get(
+      const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=4a1761b38f020e1d2f0132021b7a32d4&units=metric`
       );
-      setWeatherData(response.data);
+      if(response.ok) {
+        const data = await response.json()
+        setWeatherData(data);
+      }else {
+        setWeatherData(null);
+        throw new Error("Request failed");
+      }
     } catch (error) {
+      setWeatherData(null);
       console.error(error);
     }
   };
@@ -43,6 +49,7 @@ const App = () => {
           <p>Description: {weatherData.weather[0].description}</p>
         </div>
       )}
+      {!weatherData && <h2>Please enter a city</h2>}
     </div>
   );
 };
