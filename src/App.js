@@ -10,12 +10,12 @@ const App = () => {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=4a1761b38f020e1d2f0132021b7a32d4&units=metric`
       );
-      if(response.ok) {
-        const data = await response.json()
+      if (response.ok) {
+        const data = await response.json();
         setWeatherData(data);
-      }else {
+      } else {
         setWeatherData(null);
-        throw new Error("Request failed");
+        throw new Error('Request failed');
       }
     } catch (error) {
       setWeatherData(null);
@@ -23,9 +23,31 @@ const App = () => {
     }
   };
 
+  const getWeatherSymbol = (weatherCode) => {
+    switch (weatherCode) {
+      case '01d':
+        return '☀️'; // Sunny day
+      case '02d':
+        return '⛅'; // Partly cloudy day
+      case '03d':
+      case '04d':
+        return '☁️'; // Cloudy day
+      case '09d':
+        return '🌧️'; // Rainy day
+      case '10d':
+        return '🌦️'; // Showers
+      case '11d':
+        return '⛈️'; // Thunderstorm
+      case '13d':
+        return '❄️'; // Snow
+      default:
+        return '🌍'; // Globe icon
+    }
+  };
+
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      event.preventDefault(); // Prevent form submission if the input is within a form element
+      event.preventDefault();
       fetchWeatherData();
     }
   };
@@ -44,7 +66,9 @@ const App = () => {
       </div>
       {weatherData && (
         <div className="weather-info">
-          <h2>{weatherData.name}</h2>
+          <h2>
+            {weatherData.name} {getWeatherSymbol(weatherData.weather[0].icon)}
+          </h2>
           <p>Temperature: {weatherData.main.temp}°C</p>
           <p>Description: {weatherData.weather[0].description}</p>
         </div>
