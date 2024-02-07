@@ -5,9 +5,14 @@ const App = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [city, setCity] = useState('');
   const [userInput, setUserInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  useEffect(()=>{
+  useEffect(() => {
     const fetchWeatherData = async () => {
+      if (!city) return;
+      setLoading(true);
+      setError(null)
       try {
         const response = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=4a1761b38f020e1d2f0132021b7a32d4&units=metric`
@@ -17,16 +22,18 @@ const App = () => {
           setWeatherData(data);
         } else {
           setWeatherData(null);
-          throw new Error('Request failed');
+          setError('City not found. Please enter a valid city name.');
         }
       } catch (error) {
         setWeatherData(null);
+        setError('Failed to fetch weather data. Please try again later.');
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchWeatherData();
-  }, [city]
-  )
+  }, [city]);
 
   const getWeatherSymbol = (weatherCode) => {
     switch (weatherCode) {
@@ -67,8 +74,10 @@ const App = () => {
           onChange={(e) => setUserInput(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <button onClick={()=>setCity(userInput)}>Get Weather</button>
+        <button onClick={() => setCity(userInput)}>Get Weather</button>
       </div>
+      {loading && <p>Loading...</p>}
+      {error && <p>{error}</p>}
       {weatherData && (
         <div className="weather-info">
           <h2>
@@ -78,7 +87,7 @@ const App = () => {
           <p>Description: {weatherData.weather[0].description}</p>
         </div>
       )}
-      {!weatherData && <h2>Please enter a city</h2>}
+      {!weatherData && !error && !loading && <h2>Please enter a city</h2>}
     </div>
   );
 };
