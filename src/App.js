@@ -1,27 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 const App = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [city, setCity] = useState('');
+  const [userInput, setUserInput] = useState('');
 
-  const fetchWeatherData = async () => {
-    try {
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=4a1761b38f020e1d2f0132021b7a32d4&units=metric`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setWeatherData(data);
-      } else {
+  useEffect(()=>{
+    const fetchWeatherData = async () => {
+      try {
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=4a1761b38f020e1d2f0132021b7a32d4&units=metric`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setWeatherData(data);
+        } else {
+          setWeatherData(null);
+          throw new Error('Request failed');
+        }
+      } catch (error) {
         setWeatherData(null);
-        throw new Error('Request failed');
+        console.error(error);
       }
-    } catch (error) {
-      setWeatherData(null);
-      console.error(error);
-    }
-  };
+    };
+    fetchWeatherData();
+  }, [city]
+  )
 
   const getWeatherSymbol = (weatherCode) => {
     switch (weatherCode) {
@@ -48,7 +53,7 @@ const App = () => {
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      fetchWeatherData();
+      setCity(userInput)
     }
   };
 
@@ -58,11 +63,11 @@ const App = () => {
         <input
           type="text"
           placeholder="Enter a city"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
+          value={userInput}
+          onChange={(e) => setUserInput(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <button onClick={fetchWeatherData}>Get Weather</button>
+        <button onClick={()=>setCity(userInput)}>Get Weather</button>
       </div>
       {weatherData && (
         <div className="weather-info">
