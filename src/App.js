@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import WeatherDataComponent from './components/WeatherDataComponent/WeatherData';
 
 const App = () => {
   const [weatherData, setWeatherData] = useState(null);
@@ -35,28 +36,6 @@ const App = () => {
     fetchWeatherData();
   }, [city]);
 
-  const getWeatherSymbol = (weatherCode) => {
-    switch (weatherCode) {
-      case '01d':
-        return '☀️'; // Sunny day
-      case '02d':
-        return '⛅'; // Partly cloudy day
-      case '03d':
-      case '04d':
-        return '☁️'; // Cloudy day
-      case '09d':
-        return '🌧️'; // Rainy day
-      case '10d':
-        return '🌦️'; // Showers
-      case '11d':
-        return '⛈️'; // Thunderstorm
-      case '13d':
-        return '❄️'; // Snow
-      default:
-        return '🌍'; // Globe icon
-    }
-  };
-
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -79,13 +58,7 @@ const App = () => {
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
       {weatherData && (
-        <div className="weather-info">
-          <h2>
-            {weatherData.name} {getWeatherSymbol(weatherData.weather[0].icon)}
-          </h2>
-          <p>Temperature: {weatherData.main.temp}°C</p>
-          <p>Description: {weatherData.weather[0].description}</p>
-        </div>
+        <WeatherDataComponent name={weatherData.name} main={weatherData.main} weather={weatherData.weather}/>
       )}
       {!weatherData && !error && !loading && <h2>Please enter a city</h2>}
     </div>
